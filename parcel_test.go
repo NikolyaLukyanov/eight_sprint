@@ -41,10 +41,23 @@ func TestAddGetDelete(t *testing.T) {
 	// get
 	retrievedParcel, err := store.Get(id)
 	require.NoError(t, err)
-	require.Equal(t, parcel.Client, retrievedParcel.Client)
-	require.Equal(t, parcel.Status, retrievedParcel.Status)
-	require.Equal(t, parcel.Address, retrievedParcel.Address)
-	require.Equal(t, parcel.CreatedAt, retrievedParcel.CreatedAt)
+
+	// Создаем временную структуру для сравнения без поля Number
+	parcelWithoutNumber := Parcel{
+		Client:    parcel.Client,
+		Status:    parcel.Status,
+		Address:   parcel.Address,
+		CreatedAt: parcel.CreatedAt,
+	}
+
+	retrievedParcelWithoutNumber := Parcel{
+		Client:    retrievedParcel.Client,
+		Status:    retrievedParcel.Status,
+		Address:   retrievedParcel.Address,
+		CreatedAt: retrievedParcel.CreatedAt,
+	}
+
+	require.Equal(t, parcelWithoutNumber, retrievedParcelWithoutNumber)
 
 	// delete
 	err = store.Delete(id)
@@ -140,9 +153,6 @@ func TestGetByClient(t *testing.T) {
 	for _, parcel := range storedParcels {
 		expectedParcel, exists := parcelMap[parcel.Number]
 		require.True(t, exists)
-		require.Equal(t, expectedParcel.Client, parcel.Client)
-		require.Equal(t, expectedParcel.Status, parcel.Status)
-		require.Equal(t, expectedParcel.Address, parcel.Address)
-		require.Equal(t, expectedParcel.CreatedAt, parcel.CreatedAt)
+		require.Equal(t, expectedParcel, parcel)
 	}
 }
